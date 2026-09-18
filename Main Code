@@ -1,53 +1,64 @@
+import pandas as pd
+
+print("Welcome to my All-Time Olympic 100m Times program!")
+print()
+print("This program will compare your 100m time to the")
+print("times in my Olympic runners dataset.")
+print()
+print("It will give you a percentile showing how your time")
+print("compares to the runners in the dataset.")
+print()
+print("Remember: in the 100m, a lower time is faster!")
+print()
+
+
 def time_to_seconds(time):
     return float(time)
 
 
+# Read the CSV file
+df = pd.read_csv("runners.csv")
+
+
+# Find the percentile
 def percentile(dataset, persons_time):
+
     times = [time_to_seconds(person) for person in dataset]
     target = time_to_seconds(persons_time)
 
-    # For running times, LOWER is faster.
-    # Count how many times are slower than the person's time.
+    # Lower times are faster, so we count
+    # how many times are slower than the person's time
     slower = sum(t > target for t in times)
+
+    # Count times that are exactly the same
     equal = sum(t == target for t in times)
 
+    # Calculate the percentile
     return (slower + 0.5 * equal) / len(times) * 100
 
 
-dataset = """9.58
-9.69
-9.69
-9.72
-9.74
-9.75
-9.76
-9.76
-9.77
-9.77
-9.78
-9.79
-9.79
-9.80
-9.80
-9.80
-9.81
-9.81
-9.82
-9.82
-9.83
-9.83
-9.83
-9.83
-9.84
-9.84
-9.84
-9.84
-9.85
-9.85""".splitlines()
+# Ask the user for their time
+person = input("Enter your 100m time (example: 9.99): ")
 
 
-person = input("Enter person's 100m time (__.__). Example 9.99: ")
+# Make sure the user entered a number
+try:
+    person = float(person)
 
-result = percentile(dataset, person)
+    if person <= 0:
+        print("Please enter a time greater than 0.")
 
-print(f"Percentile: {result:.2f}")
+    else:
+        # Get the percentile using the Time column
+        result = percentile(df["Time"], person)
+
+        print()
+        print("Your 100m time is:", person, "seconds")
+        print("Your percentile is:", f"{result:.2f}%")
+        print()
+        print("This means your time was faster than about",
+              f"{result:.2f}%",
+              "of the performances in the dataset.")
+
+except ValueError:
+    print("Please enter a valid number.")
