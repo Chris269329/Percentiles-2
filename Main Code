@@ -1,0 +1,53 @@
+def time_to_seconds(time):
+    return float(time)
+
+
+def percentile(dataset, persons_time):
+    times = [time_to_seconds(person) for person in dataset]
+    target = time_to_seconds(persons_time)
+
+    # For running times, LOWER is faster.
+    # Count how many times are slower than the person's time.
+    slower = sum(t > target for t in times)
+    equal = sum(t == target for t in times)
+
+    return (slower + 0.5 * equal) / len(times) * 100
+
+
+dataset = """9.58
+9.69
+9.69
+9.72
+9.74
+9.75
+9.76
+9.76
+9.77
+9.77
+9.78
+9.79
+9.79
+9.80
+9.80
+9.80
+9.81
+9.81
+9.82
+9.82
+9.83
+9.83
+9.83
+9.83
+9.84
+9.84
+9.84
+9.84
+9.85
+9.85""".splitlines()
+
+
+person = input("Enter person's 100m time (__.__). Example 9.99: ")
+
+result = percentile(dataset, person)
+
+print(f"Percentile: {result:.2f}")
